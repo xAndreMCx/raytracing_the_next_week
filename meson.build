@@ -1,7 +1,7 @@
 project(
   'raytracer',
   'c',
-  version: '1.0.0',
+  version: '0.1.0',
   default_options: ['c_std=c11', 'warning_level=3'],
 )
 
@@ -30,6 +30,5 @@ executable(
   src_files,
   include_directories: inc,
   dependencies: [m_dep, thread_dep],
-  link_args: ['-L' + meson.current_source_dir() + '/lib'],
   install: true,
 )
