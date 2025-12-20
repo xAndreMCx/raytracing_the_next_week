@@ -4,6 +4,7 @@
 #include "interval.h"
 #include "material.h"
 #include "vec.h"
+#include "ray.h"
 
 /**
  * @struct sphere_t
@@ -11,7 +12,7 @@
  */
 typedef struct {
   hittable_t base;
-  vec3_t center;
+  ray_t center;
   double radius;
   material_t* material;
 } sphere_t;
@@ -25,6 +26,17 @@ typedef struct {
  * @return A sphere with the specified properties.
  */
 sphere_t sphere_create(vec3_t center, double radius, material_t* material);
+
+/**
+ * @brief Creates a sphere with the specified center, radius, and material.
+ *
+ * @param center1 Center of the sphere at t=0.
+ * @param center2 Center of the sphere at t=1.
+ * @param radius Radius of the sphere.
+ * @param material Pointer to the material of the sphere.
+ * @return A sphere with the specified properties.
+ */
+sphere_t sphere_moving_create(vec3_t center1, vec3_t center2, double radius, material_t* material);
 
 /**
  * @brief Checks if a ray hits the sphere.

@@ -25,7 +25,7 @@ bool lambertian_scatter(lambertian_t* material, ray_t* ray, hit_record_t* hit_re
   if (vec3_near_zero(scatter_direction)) {
     scatter_direction = hit_record->normal;
   }
-  *scattered_ray = (ray_t){hit_record->point, scatter_direction};
+  *scattered_ray = (ray_t){hit_record->point, scatter_direction, ray->time};
   *attenuation = material->albedo;
   return true;
 }
@@ -39,7 +39,7 @@ metal_t metal_create(color_t albedo, double fuzz) {
 bool metal_scatter(metal_t* material, ray_t* ray, hit_record_t* hit_record, color_t* attenuation, ray_t* scattered_ray) {
   vec3_t reflected = vec3_reflect(vec3_normalised(ray->direction), hit_record->normal);
   reflected = vec3_add(reflected, vec3_scale(vec3_create_random_unit(), material->fuzz));
-  *scattered_ray = (ray_t){hit_record->point, reflected};
+  *scattered_ray = (ray_t){hit_record->point, reflected, ray->time};
   *attenuation = material->albedo;
   return vec3_dot(scattered_ray->direction, hit_record->normal) > 0;
 }
@@ -71,6 +71,6 @@ bool dielectric_scatter(dielectric_t* material, ray_t* ray, hit_record_t* hit_re
     direction = vec3_refract(unit_direction, hit_record->normal, refraction_ratio);
   }
 
-  *scattered_ray = (ray_t){hit_record->point, direction};
+  *scattered_ray = (ray_t){hit_record->point, direction, ray->time};
   return true;
 }

@@ -4,11 +4,12 @@
 
 /**
  * @struct ray_t
- * @brief Represents a ray in 3D space with an origin and a direction.
+ * @brief Represents a ray in 3D space with an origin, a direction, and a time index between 0 and 1.
  */
 typedef struct {
   vec3_t origin;
   vec3_t direction;
+  double time;
 } ray_t;
 
 /**

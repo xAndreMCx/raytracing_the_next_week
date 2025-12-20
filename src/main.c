@@ -14,9 +14,12 @@ int main(void) {
   seed_thread_rng((unsigned int)time(NULL));
   // Camera
   double aspect_ratio = 16.0 / 9.0;
-  unsigned int width = 1280u;
+  unsigned int width = 400u;
   camera_t camera =
       camera_create(width, aspect_ratio, vec3_create(13, 2, 3), vec3_create(0, 0, 0), vec3_create(0, 1, 0), 20.0);
+
+  camera.max_depth = 50;
+  camera.samples_per_pixel = 100;
 
   // World
   hittable_list_t world = hittable_list_create(400);
@@ -36,8 +39,9 @@ int main(void) {
           vec3_t albedo = vec3_hadamard(vec3_create_random(0, 1), vec3_create_random(0, 1));
           lambertian_t* material = malloc(sizeof(lambertian_t));
           *material = lambertian_create(albedo);
+          vec3_t center2 = vec3_add(center, vec3_create(0, rand_double(0, 0.5), 0));
           sphere_t* sphere = malloc(sizeof(sphere_t));
-          *sphere = sphere_create(center, 0.2, &material->base);
+          *sphere = sphere_moving_create(center, center2, 0.2, &material->base);
           hittable_list_add(&world, &sphere->base);
         } else if (choose_mat < 0.95) {
           // Metal

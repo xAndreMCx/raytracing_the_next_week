@@ -80,13 +80,13 @@ void* render_pixel_worker(void* arg) {
     pixel_color = vec3_scale(pixel_color, 1.0f / data->camera->samples_per_pixel);
     pixel_color = vec3_map(pixel_color, linear_to_gamma);
 
-    // // Gamma correction
-    // pixel_color = vec3_map(pixel_color, linear_to_gamma);
-    //
-    // interval_t intensity = interval_create(0.0, 1.0);
-    // pixel_color.r = interval_clamp(&intensity, pixel_color.r);
-    // pixel_color.g = interval_clamp(&intensity, pixel_color.g);
-    // pixel_color.b = interval_clamp(&intensity, pixel_color.b);
+    // Gamma correction
+    pixel_color = vec3_map(pixel_color, linear_to_gamma);
+
+    interval_t intensity = interval_create(0.0, 1.0);
+    pixel_color.r = interval_clamp(&intensity, pixel_color.r);
+    pixel_color.g = interval_clamp(&intensity, pixel_color.g);
+    pixel_color.b = interval_clamp(&intensity, pixel_color.b);
 
     ppm_set(data->render_result, x, y, pixel_color);
   }
@@ -166,8 +166,9 @@ ray_t ray_get(camera_t* camera, unsigned int x, unsigned int y) {
 
   vec3_t ray_origin = (camera->defocus_angle <= 0) ? camera->center : camera_defocus_disk_sample(camera);
   vec3_t ray_direction = vec3_sub(pixel_sample, ray_origin);
+  double ray_time = rand_double(0, 1);
 
-  ray_t ray = {ray_origin, ray_direction};
+  ray_t ray = {ray_origin, ray_direction, ray_time};
 
   return ray;
 }
