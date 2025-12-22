@@ -49,6 +49,15 @@ bool interval_surrounds(interval_t* interval, double x);
 double interval_clamp(interval_t* interval, double x);
 
 /**
+ * @brief Pad the interval with a certain amount.
+ * 
+ * @param interval The interval.
+ * @param delta The value to pad the interval with.
+ * @return The padded interval.
+ */
+interval_t interval_expand(interval_t* interval, double delta);
+
+/**
  * @brief Macro for an empty interval.
  */
 #define EMPTY_INTERVAL ((interval_t){.min = INFINITY, .max = -INFINITY})

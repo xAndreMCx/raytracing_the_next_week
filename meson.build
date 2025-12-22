@@ -23,6 +23,7 @@ src_files = [
   'src/sphere.c',
   'src/utils.c',
   'src/vec.c',
+  'src/aabb.c',
 ]
 
 executable(
