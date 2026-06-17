@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+#include "aabb.h"
+#include "interval.h"
 #include "sphere.h"
 
 bool hittable_hit(hittable_t* hittable, ray_t* ray, interval_t* interval, hit_record_t* hit_record) {
@@ -11,12 +13,25 @@ bool hittable_hit(hittable_t* hittable, ray_t* ray, interval_t* interval, hit_re
   assert(hit_record);
 
   switch (hittable->type) {
-    case HITTABLE_SPHERE:
-      return sphere_hit((sphere_t*)hittable, ray, interval, hit_record);
+  case HITTABLE_SPHERE:
+    return sphere_hit((sphere_t*)hittable, ray, interval, hit_record);
 
-    default:
+  default:
 
-      return 0;
+    return 0;
+  }
+}
+
+aabb_t hittable_bounding_box(hittable_t* hittable) {
+  assert(hittable);
+
+  switch (hittable->type) {
+  case HITTABLE_SPHERE:
+    return sphere_bounding_box((sphere_t*)hittable);
+
+  default:
+
+    return aabb_empty();
   }
 }
 

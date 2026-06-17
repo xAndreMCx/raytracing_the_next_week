@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 
+#include "aabb.h"
 #include "hittable.h"
 #include "interval.h"
 #include "ray.h"
@@ -14,6 +15,7 @@ typedef struct {
   hittable_t** hittables; // Array of pointers to hittable objects.
   unsigned int length;    // Current number of hittable objects in the list.
   unsigned int capacity;  // Maximum capacity of the list.
+  aabb_t bbox;            // The bounding box of all the hittables.
 } hittable_list_t;
 
 /**

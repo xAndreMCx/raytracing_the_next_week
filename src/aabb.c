@@ -1,4 +1,7 @@
 #include "aabb.h"
+
+#include <math.h>
+
 #include "interval.h"
 
 aabb_t aabb_create(interval_t* x, interval_t* y, interval_t* z) { return (aabb_t){.x = *x, .y = *y, .z = *z}; }
@@ -8,6 +11,12 @@ aabb_t aabb_from_points_create(vec3_t* a, vec3_t* b) {
   interval_t y = (a->y <= b->y) ? interval_create(a->y, b->y) : interval_create(b->y, a->y);
   interval_t z = (a->z <= b->z) ? interval_create(a->z, b->z) : interval_create(b->z, a->z);
   return (aabb_t){.x = x, .y = y, .z = z};
+}
+
+aabb_t aabb_empty(void) {
+  return (aabb_t){.x = {.min = INFINITY, .max = -INFINITY},
+                  .y = {.min = INFINITY, .max = -INFINITY},
+                  .z = {.min = INFINITY, .max = -INFINITY}};
 }
 
 interval_t* aabb_axis_interval(aabb_t* aabb, int n) {
@@ -20,9 +29,16 @@ interval_t* aabb_axis_interval(aabb_t* aabb, int n) {
   return &aabb->x;
 }
 
+aabb_t aabb_from_boxes_create(aabb_t* box1, aabb_t* box2) {
+  interval_t x = interval_from_intervals_create(&box1->x, &box2->x);
+  interval_t y = interval_from_intervals_create(&box1->y, &box2->y);
+  interval_t z = interval_from_intervals_create(&box1->z, &box2->z);
+  return aabb_create(&x, &y, &z);
+}
+
 bool aabb_hit(aabb_t* aabb, ray_t* ray, interval_t* interval) {
   for (int axis = 0; axis <= 3; axis++) {
-    interval_t ax = *aabb_axis_interval(aabb, axis); 
+    interval_t ax = *aabb_axis_interval(aabb, axis);
     double ray_dir_inv = 1.0 / ray->direction.elements[axis];
 
     double t0 = (ax.min - ray->origin.elements[axis]) * ray_dir_inv;
@@ -30,19 +46,18 @@ bool aabb_hit(aabb_t* aabb, ray_t* ray, interval_t* interval) {
 
     if (t0 < t1) {
       if (t0 > interval->min) {
-        interval->min = t0; 
+        interval->min = t0;
       }
       if (t1 < interval->max) {
-        interval->max = t1; 
+        interval->max = t1;
       }
     } else {
       if (t1 > interval->min) {
-        interval->min = t1; 
+        interval->min = t1;
       }
       if (t0 < interval->max) {
-        interval->max = t0; 
+        interval->max = t0;
       }
-
     }
     if (interval->max <= interval->min) {
       return false;

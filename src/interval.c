@@ -5,6 +5,12 @@ interval_t interval_create(double min, double max) {
   return result;
 }
 
+interval_t interval_from_intervals_create(interval_t* a, interval_t* b) {
+  double min = a->min <= b->min ? a->min : b->min;
+  double max = a->max >= b->max ? a->max : b->max;
+  return interval_create(min, max);
+}
+
 bool interval_contains(interval_t* interval, double x) { return (interval->min <= x && x <= interval->max); }
 
 bool interval_surrounds(interval_t* interval, double x) { return (interval->min < x && x < interval->max); }

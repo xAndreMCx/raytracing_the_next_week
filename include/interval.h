@@ -22,6 +22,15 @@ typedef struct {
 interval_t interval_create(double min, double max);
 
 /**
+ * @brief Create an interval to contain the two intervals.
+ *
+ * @param a The first interval.
+ * @param b The second interval.
+ * @return The created interval.
+ */
+interval_t interval_from_intervals_create(interval_t* a, interval_t* b);
+
+/**
  * @brief Check if a value x is within the interval.
  *
  * @param interval The interval.

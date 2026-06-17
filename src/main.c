@@ -12,6 +12,7 @@
 
 int main(void) {
   seed_thread_rng((unsigned int)time(NULL));
+
   // Camera
   double aspect_ratio = 16.0 / 9.0;
   unsigned int width = 400u;

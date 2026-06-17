@@ -2,6 +2,7 @@
 
 #include <assert.h>
 
+#include "aabb.h"
 #include "math.h"
 #include "ray.h"
 #include "vec.h"
@@ -56,4 +57,19 @@ bool sphere_hit(sphere_t* sphere, ray_t* ray, interval_t* interval, hit_record_t
   vec3_t outward_normal = vec3_div(vec3_sub(hit_record->point, current_center), sphere->radius);
   set_face_normal(hit_record, ray, &outward_normal);
   return true;
+}
+
+// NOTE: could be optimized by check if the sphere is moving or not
+aabb_t sphere_bounding_box(sphere_t* sphere) {
+  assert(sphere);
+
+  vec3_t radius_vec = vec3_create(sphere->radius, sphere->radius, sphere->radius);
+  vec3_t corner1 = vec3_sub(ray_point(&sphere->center, 0), radius_vec);
+  vec3_t corner2 = vec3_add(ray_point(&sphere->center, 0), radius_vec);
+  aabb_t box1 = aabb_from_points_create(&corner1, &corner2);
+  corner1 = vec3_sub(ray_point(&sphere->center, 1), radius_vec);
+  corner2 = vec3_add(ray_point(&sphere->center, 1), radius_vec);
+  aabb_t box2 = aabb_from_points_create(&corner1, &corner2);
+  return aabb_from_boxes_create(&box1, &box2);
+
 }

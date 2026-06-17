@@ -1,10 +1,11 @@
 #pragma once
 
+#include "aabb.h"
 #include "hittable.h"
 #include "interval.h"
 #include "material.h"
-#include "vec.h"
 #include "ray.h"
+#include "vec.h"
 
 /**
  * @struct sphere_t
@@ -48,3 +49,11 @@ sphere_t sphere_moving_create(vec3_t center1, vec3_t center2, double radius, mat
  * @return True if the ray hits the sphere, false otherwise.
  */
 bool sphere_hit(sphere_t* sphere, ray_t* ray, interval_t* interval, hit_record_t* hit_record);
+
+/**
+ * @brief Returns the sphere's bounding box.
+ *
+ * @param sphere Pointer to the sphere.
+ * @return The bounding box of the sphere.
+ */
+aabb_t sphere_bounding_box(sphere_t* sphere);

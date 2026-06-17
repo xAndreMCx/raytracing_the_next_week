@@ -5,6 +5,7 @@
 #include "interval.h"
 #include "ray.h"
 #include "vec.h"
+#include "aabb.h"
 
 /**
  * @struct hit_record_t
@@ -42,6 +43,14 @@ typedef struct {
  * @return True if the ray hits the object, false otherwise.
  */
 bool hittable_hit(hittable_t* hittable, ray_t* ray, interval_t* interval, hit_record_t* hit_record);
+
+/**
+ * @brief Returns the bounding box of a hittable object.
+ *
+ * @param hittable Pointer to the hittable object.
+ * @return The bounding box.
+ */
+aabb_t hittable_bounding_box(hittable_t* hittable);
 
 /**
  * @brief Sets the face normal of the hit record.

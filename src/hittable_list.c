@@ -1,4 +1,6 @@
 #include "hittable_list.h"
+#include "aabb.h"
+#include "hittable.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -12,7 +14,7 @@ static void hittable_list_resize(hittable_list_t* list, unsigned int resize_ammo
 }
 
 hittable_list_t hittable_list_create(unsigned int capacity) {
-  hittable_list_t result = {.hittables = calloc(capacity, sizeof(hittable_t*)), .length = 0, .capacity = capacity};
+  hittable_list_t result = {.hittables = calloc(capacity, sizeof(hittable_t*)), .length = 0, .capacity = capacity, .bbox = aabb_empty()};
   assert(result.hittables);
   return result;
 }
@@ -28,6 +30,8 @@ void hittable_list_add(hittable_list_t* list, hittable_t* hittable) {
   }
 
   list->hittables[list->length - 1] = hittable;
+  aabb_t hittable_aabb = hittable_bounding_box(hittable);
+  list->bbox = aabb_from_boxes_create(&list->bbox, &hittable_aabb);
 }
 
 void hittable_list_clear(hittable_list_t* list) {
