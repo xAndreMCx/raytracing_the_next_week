@@ -16,6 +16,8 @@ typedef struct {
   vec3_t normal;     // The normal at the intersection point.
   void* material;    // Pointer to the material of the object.
   double t;          // The parameter t of the ray at the point of intersection.
+  double u;          // The U surface coordinate of the ray-object intersection.
+  double v;          // The V surface coordinate of the ray-object intersection.
   bool front_facing; // Whether the intersection is front-facing.
 } hit_record_t;
 

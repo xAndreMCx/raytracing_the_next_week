@@ -1,11 +1,20 @@
 #include "sphere.h"
 
 #include <assert.h>
+#include <math.h>
 
 #include "aabb.h"
-#include "math.h"
 #include "ray.h"
 #include "vec.h"
+#include "utils.h"
+
+static void sphere_get_uv(vec3_t* point, double* u, double* v) {
+  double theta = acos(point->y);
+  double phi = atan2(-point->z, point->x) + RT_PI;
+
+  *u = phi / (2 * RT_PI);
+  *v = theta / RT_PI;
+}
 
 sphere_t sphere_create(vec3_t center, double radius, material_t* material) {
   sphere_t result = {.base = {HITTABLE_SPHERE},
@@ -56,6 +65,8 @@ bool sphere_hit(sphere_t* sphere, ray_t* ray, interval_t* interval, hit_record_t
   hit_record->material = sphere->material;
   vec3_t outward_normal = vec3_div(vec3_sub(hit_record->point, current_center), sphere->radius);
   set_face_normal(hit_record, ray, &outward_normal);
+  sphere_get_uv(&outward_normal, &hit_record->u, &hit_record->v);
+
   return true;
 }
 
@@ -71,5 +82,4 @@ aabb_t sphere_bounding_box(sphere_t* sphere) {
   corner2 = vec3_add(ray_point(&sphere->center, 1), radius_vec);
   aabb_t box2 = aabb_from_points_create(&corner1, &corner2);
   return aabb_from_boxes_create(&box1, &box2);
-
 }

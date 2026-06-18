@@ -5,7 +5,7 @@ project(
   default_options: ['c_std=c11', 'warning_level=3'],
 )
 
-inc = include_directories('include')
+inc = include_directories('include', 'vendor/stb')
 
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required: true)
@@ -25,6 +25,11 @@ src_files = [
   'src/vec.c',
   'src/aabb.c',
   'src/bvh.c',
+  'src/texture.c',
+  'src/scene.c',
+  'src/image.c',
+
+  'vendor/stb/stb_impl.c',
 ]
 
 executable(

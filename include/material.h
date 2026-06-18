@@ -3,6 +3,7 @@
 
 #include "hittable.h"
 #include "ray.h"
+#include "texture.h"
 #include "vec.h"
 
 /**
@@ -37,7 +38,7 @@ bool material_scatter(material_t* material, ray_t* ray, hit_record_t* hit_record
  */
 typedef struct {
   material_t base;
-  color_t albedo; // Albedo color of the material.
+  texture_t* texture;
 } lambertian_t;
 
 /**
@@ -46,7 +47,15 @@ typedef struct {
  * @param albedo The albedo color of the material.
  * @return A Lambertian material with the specified albedo.
  */
-lambertian_t lambertian_create(color_t albedo);
+lambertian_t lambertian_create_from_color(color_t albedo);
+
+/**
+ * @brief Creates a Lambertian material with the specified texture.
+ *
+ * @param texture The texture of the material.
+ * @return A Lambertian material with the specified texture.
+ */
+lambertian_t lambertian_create(texture_t* texture);
 
 /**
  * @brief Scatters a ray based on Lambertian material properties.
