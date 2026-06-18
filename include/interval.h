@@ -67,6 +67,14 @@ double interval_clamp(interval_t* interval, double x);
 interval_t interval_expand(interval_t* interval, double delta);
 
 /**
+ * @brief Returns the size of the interval.
+ *
+ * @param interval The interval.
+ * @return The size (max - min).
+ */
+double interval_size(interval_t* interval);
+
+/**
  * @brief Macro for an empty interval.
  */
 #define EMPTY_INTERVAL ((interval_t){.min = INFINITY, .max = -INFINITY})

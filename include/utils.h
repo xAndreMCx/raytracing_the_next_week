@@ -64,6 +64,18 @@ void seed_thread_rng(unsigned int seed);
 double rand_double(double min, double max);
 
 /**
+ * @brief Generates a random int between min and max.
+ *
+ * This function generates a random double value in the range [min, max].
+ * It uses the thread-local rng_state.
+ *
+ * @param min The minimum value.
+ * @param max The maximum value.
+ * @return A random int value between min and max.
+ */
+int rand_int(int min, int max);
+
+/**
  * @brief Converts a linear color value to gamma-corrected value.
  *
  * @param linear The linear color value.

@@ -24,6 +24,7 @@ src_files = [
   'src/utils.c',
   'src/vec.c',
   'src/aabb.c',
+  'src/bvh.c',
 ]
 
 executable(

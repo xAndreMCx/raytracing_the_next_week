@@ -37,7 +37,8 @@ aabb_t aabb_from_boxes_create(aabb_t* box1, aabb_t* box2) {
 }
 
 bool aabb_hit(aabb_t* aabb, ray_t* ray, interval_t* interval) {
-  for (int axis = 0; axis <= 3; axis++) {
+  interval_t ray_interval = *interval;
+  for (int axis = 0; axis < 3; axis++) {
     interval_t ax = *aabb_axis_interval(aabb, axis);
     double ray_dir_inv = 1.0 / ray->direction.elements[axis];
 
@@ -45,24 +46,37 @@ bool aabb_hit(aabb_t* aabb, ray_t* ray, interval_t* interval) {
     double t1 = (ax.max - ray->origin.elements[axis]) * ray_dir_inv;
 
     if (t0 < t1) {
-      if (t0 > interval->min) {
-        interval->min = t0;
+      if (t0 > ray_interval.min) {
+        ray_interval.min = t0;
       }
-      if (t1 < interval->max) {
-        interval->max = t1;
+      if (t1 < ray_interval.max) {
+        ray_interval.max = t1;
       }
     } else {
-      if (t1 > interval->min) {
-        interval->min = t1;
+      if (t1 > ray_interval.min) {
+        ray_interval.min = t1;
       }
-      if (t0 < interval->max) {
-        interval->max = t0;
+      if (t0 < ray_interval.max) {
+        ray_interval.max = t0;
       }
     }
-    if (interval->max <= interval->min) {
+
+    if (ray_interval.max <= ray_interval.min) {
       return false;
     }
   }
 
   return true;
+}
+
+int aabb_longest_axis(aabb_t* aabb) {
+  double x_size = interval_size(&aabb->x);
+  double y_size = interval_size(&aabb->y);
+  double z_size = interval_size(&aabb->z);
+
+  if (x_size > y_size) {
+    return (x_size > z_size) ? 0 : 2;
+  } else {
+    return (y_size > z_size) ? 1 : 2;
+  }
 }

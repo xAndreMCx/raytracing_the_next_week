@@ -29,3 +29,5 @@ interval_t interval_expand(interval_t* interval, double delta) {
   double padding = delta / 2;
   return interval_create(interval->min - padding, interval->max + padding);
 }
+
+double interval_size(interval_t* interval) { return interval->max - interval->min; }

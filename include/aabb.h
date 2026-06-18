@@ -3,8 +3,8 @@
 #include <stdbool.h>
 
 #include "interval.h"
-#include "vec.h"
 #include "ray.h"
+#include "vec.h"
 
 typedef struct {
   interval_t x;
@@ -64,6 +64,14 @@ interval_t* aabb_axis_interval(aabb_t* aabb, int n);
  * @param aabb The AABB.
  * @param ray The ray.
  * @param interval ?.
- * @return True if the ray hits the AABB, otherwise false. 
+ * @return True if the ray hits the AABB, otherwise false.
  */
 bool aabb_hit(aabb_t* aabb, ray_t* ray, interval_t* interval);
+
+/**
+ * @brief Returns the index of the longest axis of the bounding box.
+ *
+ * @param aabb The AABB.
+ * @return 0 for X, 1 for Y, 2 for Z.
+ */
+int aabb_longest_axis(aabb_t* aabb);

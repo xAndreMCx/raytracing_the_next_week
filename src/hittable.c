@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "aabb.h"
+#include "bvh.h"
 #include "interval.h"
 #include "sphere.h"
 
@@ -16,6 +17,9 @@ bool hittable_hit(hittable_t* hittable, ray_t* ray, interval_t* interval, hit_re
   case HITTABLE_SPHERE:
     return sphere_hit((sphere_t*)hittable, ray, interval, hit_record);
 
+  case HITTABLE_BVH_NODE:
+    return bvh_node_hit((bvh_node_t*)hittable, ray, interval, hit_record);
+
   default:
 
     return 0;
@@ -28,6 +32,9 @@ aabb_t hittable_bounding_box(hittable_t* hittable) {
   switch (hittable->type) {
   case HITTABLE_SPHERE:
     return sphere_bounding_box((sphere_t*)hittable);
+
+  case HITTABLE_BVH_NODE:
+    return bvh_node_bounding_box((bvh_node_t*)hittable);
 
   default:
 

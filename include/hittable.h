@@ -2,10 +2,10 @@
 
 #include <stdbool.h>
 
+#include "aabb.h"
 #include "interval.h"
 #include "ray.h"
 #include "vec.h"
-#include "aabb.h"
 
 /**
  * @struct hit_record_t
@@ -23,7 +23,7 @@ typedef struct {
  * @enum hittable_type_t
  * @brief An enumeration of different types of hittable objects.
  */
-typedef enum { HITTABLE_UNKOWN = -1, HITTABLE_SPHERE = 0 } hittable_type_t;
+typedef enum { HITTABLE_UNKOWN = -1, HITTABLE_SPHERE = 0, HITTABLE_BVH_NODE = 1 } hittable_type_t;
 
 /**
  * @struct hittable_t

@@ -28,6 +28,10 @@ double rand_double(double min, double max) {
   return min + (max - min) * random_unit;
 }
 
+int rand_int(int min, int max) {
+  return (int)rand_double(min, max+1);
+}
+
 double linear_to_gamma(double linear) {
   // Standard Gamma 2.2 correction
   return (linear > 0) ? pow(linear, 1.0 / 2.2) : 0;
