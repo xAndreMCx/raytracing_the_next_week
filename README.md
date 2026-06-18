@@ -46,10 +46,10 @@ You can also add new objects or materials to the scene to experiment with differ
 
 Here are some example images rendered using this ray tracer:
 
-<!-- ![Example Image 1](examples/example1.png) -->
-<!---->
-<!-- ![Example Image 2](examples/example2.png) -->
-<!---->
+![Example Image 1](examples/example1.png)
+
+![Example Image 2](examples/example2.png)
+
 <!-- ![Example Image 3](examples/example3.png) -->
 
 ## Contributing
