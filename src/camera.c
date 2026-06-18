@@ -78,7 +78,6 @@ void* render_pixel_worker(void* arg) {
     }
 
     pixel_color = vec3_scale(pixel_color, 1.0f / data->camera->samples_per_pixel);
-    pixel_color = vec3_map(pixel_color, linear_to_gamma);
 
     // Gamma correction
     pixel_color = vec3_map(pixel_color, linear_to_gamma);
