@@ -6,6 +6,7 @@
 
 #include "image.h"
 #include "interval.h"
+#include "perlin.h"
 #include "vec.h"
 
 color_t texture_value(texture_t* texture, double u, double v, vec3_t* p) {
@@ -15,6 +16,7 @@ color_t texture_value(texture_t* texture, double u, double v, vec3_t* p) {
   case TEXTURE_SOLID: {
     return ((solid_texture_t*)texture)->albedo;
   }
+
   case TEXTURE_CHECKER: {
     checker_texture_t* checker = (checker_texture_t*)texture;
 
@@ -30,6 +32,7 @@ color_t texture_value(texture_t* texture, double u, double v, vec3_t* p) {
       return texture_value(checker->odd, u, v, p);
     }
   }
+
   case TEXTURE_IMGAGE: {
     image_texture_t* image = (image_texture_t*)texture;
 
@@ -48,6 +51,13 @@ color_t texture_value(texture_t* texture, double u, double v, vec3_t* p) {
     double color_scale = 1.0 / 255.0;
     return col_create(color_scale * pixel[0], color_scale * pixel[1], color_scale * pixel[2]);
   }
+
+  case TEXTURE_NOISE: {
+    noise_texture_t* noise_tex = (noise_texture_t*)texture;
+    double scale = 1 + sin(noise_tex->scale * p->z + 10 * perlin_turb(noise_tex->noise, p, 7));
+    return vec3_scale(col_create(0.5, 0.5, 0.5), scale);
+  }
+
   default:
     return col_create(0, 0, 0);
   }
@@ -80,5 +90,10 @@ checker_texture_t checker_texture_create_from_colors(double scale, color_t c1, c
 
 image_texture_t image_texture_create(const char* filename) {
   image_texture_t result = {.base = {TEXTURE_IMGAGE}, .image = image_create(filename)};
+  return result;
+}
+
+noise_texture_t noise_texture_create(perlin_t* noise, double scale) {
+  noise_texture_t result = {.base = {TEXTURE_NOISE}, .noise = noise, .scale = scale};
   return result;
 }

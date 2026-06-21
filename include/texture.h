@@ -1,13 +1,14 @@
 #pragma once
 
-#include "vec.h"
 #include "image.h"
+#include "perlin.h"
+#include "vec.h"
 
 /**
  * @enum texture_type_t
  * @brief An enumeration of different types of textures.
  */
-typedef enum { TEXTURE_SOLID, TEXTURE_CHECKER, TEXTURE_IMGAGE } texture_type_t;
+typedef enum { TEXTURE_SOLID, TEXTURE_CHECKER, TEXTURE_IMGAGE, TEXTURE_NOISE } texture_type_t;
 
 /**
  * @struct texture_t
@@ -44,7 +45,17 @@ typedef struct {
 typedef struct {
   texture_t base;
   image_t image;
-} image_texture_t ;
+} image_texture_t;
+
+/**
+ * @struct noise_texture_t
+ * @brief A noise texture.
+ */
+typedef struct {
+  texture_t base;
+  perlin_t* noise;
+  double scale;
+} noise_texture_t;
 
 /**
  * @brief Gets the color value of a texture at specific coordinates.
@@ -102,3 +113,12 @@ checker_texture_t checker_texture_create_from_colors(double scale, color_t c1, c
  * @return An image texture.
  */
 image_texture_t image_texture_create(const char* filename);
+
+/**
+ * @brief Creates a texture from perlin noise.
+ *
+ * @param noise Pointer to the perlin noise.
+ * @param scale The scaling factor for the noise texture.
+ * @return A noise texture.
+ */
+noise_texture_t noise_texture_create(perlin_t* noise, double scale);

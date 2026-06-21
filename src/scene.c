@@ -5,6 +5,7 @@
 
 #include "hittable_list.h"
 #include "material.h"
+#include "perlin.h"
 #include "sphere.h"
 #include "texture.h"
 #include "utils.h"
@@ -13,6 +14,7 @@
 static scene_registry_t scenes[] = {{0, "bouncing_spheres", scene_bouncing_spheres},
                                     {1, "checker_spheres", scene_checker_spheres},
                                     {2, "earth", scene_earth},
+                                    {3, "perlin", scene_perlin},
 };
 
 void scene_bouncing_spheres(hittable_list_t* world, camera_t* camera) {
@@ -142,6 +144,34 @@ void scene_earth(hittable_list_t* world, camera_t* camera) {
   hittable_list_add(world, &sphere_earth->base);
   
   return;
+}
+
+void scene_perlin(hittable_list_t* world, camera_t* camera) {
+  // Camera
+  double aspect_ratio = 16.0 / 9.0;
+  unsigned int width = 400u;
+  *camera = camera_create(width, aspect_ratio, vec3_create(13, 2, 3), vec3_create(0, 0, 0), vec3_create(0, 1, 0), 20.0);
+
+  camera->max_depth = 50;
+  camera->samples_per_pixel = 100;
+  camera->defocus_angle = 0.0f;
+
+  // World
+  perlin_t* perlin = perlin_create();
+
+  noise_texture_t* perlin_tex = malloc(sizeof(noise_texture_t));
+  *perlin_tex = noise_texture_create(perlin, 4);
+
+  lambertian_t* material_perlin = malloc(sizeof(lambertian_t));
+  *material_perlin = lambertian_create(&perlin_tex->base);
+
+  sphere_t* sphere_bottom = malloc(sizeof(sphere_t));
+  *sphere_bottom = sphere_create(vec3_create(0, -1000, 0), 1000, &material_perlin->base);
+  hittable_list_add(world, &sphere_bottom->base);
+
+  sphere_t* sphere_top = malloc(sizeof(sphere_t));
+  *sphere_top = sphere_create(vec3_create(0, 2, 0), 2, &material_perlin->base);
+  hittable_list_add(world, &sphere_top->base);
 }
 
 scene_builder_fn scene_get_builder(int id) {

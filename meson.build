@@ -28,6 +28,7 @@ src_files = [
   'src/texture.c',
   'src/scene.c',
   'src/image.c',
+  'src/perlin.c',
 
   'vendor/stb/stb_impl.c',
 ]

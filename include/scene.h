@@ -29,3 +29,4 @@ scene_builder_fn scene_get_builder(int id);
 void scene_bouncing_spheres(hittable_list_t* world, camera_t* camera);
 void scene_checker_spheres(hittable_list_t* world, camera_t* camera);
 void scene_earth(hittable_list_t* world, camera_t* camera);
+void scene_perlin(hittable_list_t* world, camera_t* camera);
