@@ -75,3 +75,11 @@ bool aabb_hit(aabb_t* aabb, ray_t* ray, interval_t* interval);
  * @return 0 for X, 1 for Y, 2 for Z.
  */
 int aabb_longest_axis(aabb_t* aabb);
+
+
+/**
+ * @brief Ajust the AABB so that no side is narrower than some epsilon.
+ *
+ * @param aabb The AABB.
+ */
+void aabb_pad_to_minimums(aabb_t* aabb);

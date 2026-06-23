@@ -6,6 +6,7 @@
 #include "bvh.h"
 #include "interval.h"
 #include "sphere.h"
+#include "quad.h"
 
 bool hittable_hit(hittable_t* hittable, ray_t* ray, interval_t* interval, hit_record_t* hit_record) {
   assert(hittable);
@@ -19,6 +20,9 @@ bool hittable_hit(hittable_t* hittable, ray_t* ray, interval_t* interval, hit_re
 
   case HITTABLE_BVH_NODE:
     return bvh_node_hit((bvh_node_t*)hittable, ray, interval, hit_record);
+
+  case HITTABLE_QUAD:
+    return quad_hit((quad_t*)hittable, ray, interval, hit_record);
 
   default:
 
@@ -35,6 +39,9 @@ aabb_t hittable_bounding_box(hittable_t* hittable) {
 
   case HITTABLE_BVH_NODE:
     return bvh_node_bounding_box((bvh_node_t*)hittable);
+
+  case HITTABLE_QUAD:
+    return quad_bounding_box((quad_t*)hittable);
 
   default:
 

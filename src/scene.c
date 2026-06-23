@@ -6,15 +6,18 @@
 #include "hittable_list.h"
 #include "material.h"
 #include "perlin.h"
+#include "quad.h"
 #include "sphere.h"
 #include "texture.h"
 #include "utils.h"
 #include "vec.h"
 
-static scene_registry_t scenes[] = {{0, "bouncing_spheres", scene_bouncing_spheres},
-                                    {1, "checker_spheres", scene_checker_spheres},
-                                    {2, "earth", scene_earth},
-                                    {3, "perlin", scene_perlin},
+static scene_registry_t scenes[] = {
+    {0, "bouncing_spheres", scene_bouncing_spheres},
+    {1, "checker_spheres", scene_checker_spheres},
+    {2, "earth", scene_earth},
+    {3, "perlin", scene_perlin},
+    {4, "quads", scene_quads},
 };
 
 void scene_bouncing_spheres(hittable_list_t* world, camera_t* camera) {
@@ -126,7 +129,8 @@ void scene_earth(hittable_list_t* world, camera_t* camera) {
   // Camera
   double aspect_ratio = 16.0 / 9.0;
   unsigned int width = 1280u;
-  *camera = camera_create(width, aspect_ratio, vec3_create(12, 2, -3), vec3_create(0, 0, 0), vec3_create(0, 1, 0), 20.0);
+  *camera =
+      camera_create(width, aspect_ratio, vec3_create(12, 2, -3), vec3_create(0, 0, 0), vec3_create(0, 1, 0), 20.0);
 
   camera->max_depth = 50;
   camera->samples_per_pixel = 200;
@@ -142,7 +146,7 @@ void scene_earth(hittable_list_t* world, camera_t* camera) {
   sphere_t* sphere_earth = malloc(sizeof(sphere_t));
   *sphere_earth = sphere_create(vec3_create(0, 0, 0), 2, &material_earth->base);
   hittable_list_add(world, &sphere_earth->base);
-  
+
   return;
 }
 
@@ -172,6 +176,48 @@ void scene_perlin(hittable_list_t* world, camera_t* camera) {
   sphere_t* sphere_top = malloc(sizeof(sphere_t));
   *sphere_top = sphere_create(vec3_create(0, 2, 0), 2, &material_perlin->base);
   hittable_list_add(world, &sphere_top->base);
+}
+
+void scene_quads(hittable_list_t* world, camera_t* camera) {
+  // Camera
+  double aspect_ratio = 1;
+  unsigned int width = 400u;
+  *camera = camera_create(width, aspect_ratio, vec3_create(0, 0, 9), vec3_create(0, 0, 0), vec3_create(0, 1, 0), 80.0);
+
+  camera->max_depth = 50;
+  camera->samples_per_pixel = 100;
+  camera->defocus_angle = 0.0f;
+
+  // World
+  lambertian_t* mat_red = malloc(sizeof(lambertian_t));
+  lambertian_t* mat_green = malloc(sizeof(lambertian_t));
+  lambertian_t* mat_blue = malloc(sizeof(lambertian_t));
+  lambertian_t* mat_orange = malloc(sizeof(lambertian_t));
+  lambertian_t* mat_teal = malloc(sizeof(lambertian_t));
+
+  *mat_red = lambertian_create_from_color(col_create(1.0, 0.2, 0.2));
+  *mat_green = lambertian_create_from_color(col_create(0.2, 1.0, 0.2));
+  *mat_blue = lambertian_create_from_color(col_create(0.2, 0.2, 1));
+  *mat_orange = lambertian_create_from_color(col_create(1.0, 0.5, 0.0));
+  *mat_teal = lambertian_create_from_color(col_create(0.2, 0.8, 0.8));
+
+  quad_t* left = malloc(sizeof(quad_t));
+  quad_t* back = malloc(sizeof(quad_t));
+  quad_t* right = malloc(sizeof(quad_t));
+  quad_t* top = malloc(sizeof(quad_t));
+  quad_t* bottom = malloc(sizeof(quad_t));
+
+  *left = quad_create(vec3_create(-3, -2, 5), vec3_create(0, 0, -4), vec3_create(0, 4, 0), &mat_red->base);
+  *back = quad_create(vec3_create(-2, -2, 0), vec3_create(4, 0, 0), vec3_create(0, 4, 0), &mat_green->base);
+  *right = quad_create(vec3_create(3, -2, 1), vec3_create(0, 0, 4), vec3_create(0, 4, 0), &mat_blue->base);
+  *top = quad_create(vec3_create(-2, 3, 1), vec3_create(4, 0, 0), vec3_create(0, 0, 4), &mat_orange->base);
+  *bottom = quad_create(vec3_create(-2, -3, 5), vec3_create(4, 0, 0), vec3_create(0, 0, -4), &mat_teal->base);
+
+  hittable_list_add(world, &left->base);
+  hittable_list_add(world, &back->base);
+  hittable_list_add(world, &right->base);
+  hittable_list_add(world, &top->base);
+  hittable_list_add(world, &bottom->base);
 }
 
 scene_builder_fn scene_get_builder(int id) {

@@ -4,13 +4,20 @@
 
 #include "interval.h"
 
-aabb_t aabb_create(interval_t* x, interval_t* y, interval_t* z) { return (aabb_t){.x = *x, .y = *y, .z = *z}; }
+aabb_t aabb_create(interval_t* x, interval_t* y, interval_t* z) {
+  aabb_t result = (aabb_t){.x = *x, .y = *y, .z = *z};
+  aabb_pad_to_minimums(&result);
+  return result;
+}
 
 aabb_t aabb_from_points_create(vec3_t* a, vec3_t* b) {
   interval_t x = (a->x <= b->x) ? interval_create(a->x, b->x) : interval_create(b->x, a->x);
   interval_t y = (a->y <= b->y) ? interval_create(a->y, b->y) : interval_create(b->y, a->y);
   interval_t z = (a->z <= b->z) ? interval_create(a->z, b->z) : interval_create(b->z, a->z);
-  return (aabb_t){.x = x, .y = y, .z = z};
+
+  aabb_t result = (aabb_t){.x = x, .y = y, .z = z};
+  aabb_pad_to_minimums(&result);
+  return result;
 }
 
 aabb_t aabb_empty(void) {
@@ -78,5 +85,18 @@ int aabb_longest_axis(aabb_t* aabb) {
     return (x_size > z_size) ? 0 : 2;
   } else {
     return (y_size > z_size) ? 1 : 2;
+  }
+}
+
+void aabb_pad_to_minimums(aabb_t* aabb) {
+  double epsilon = 1e-6;
+  if (interval_size(&aabb->x) < epsilon) {
+    aabb->x = interval_expand(&aabb->x, epsilon);
+  }
+  if (interval_size(&aabb->y) < epsilon) {
+    aabb->y = interval_expand(&aabb->y, epsilon);
+  }
+  if (interval_size(&aabb->z) < epsilon) {
+    aabb->z = interval_expand(&aabb->z, epsilon);
   }
 }

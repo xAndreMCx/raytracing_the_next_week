@@ -30,3 +30,4 @@ void scene_bouncing_spheres(hittable_list_t* world, camera_t* camera);
 void scene_checker_spheres(hittable_list_t* world, camera_t* camera);
 void scene_earth(hittable_list_t* world, camera_t* camera);
 void scene_perlin(hittable_list_t* world, camera_t* camera);
+void scene_quads(hittable_list_t* world, camera_t* camera);
