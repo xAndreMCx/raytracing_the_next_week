@@ -10,7 +10,13 @@
  * @enum material_type_t
  * @brief An enumeration of different types of materials.
  */
-typedef enum { MATERIAL_UNKOWN = -1, MATERIAL_LAMBERTIAN = 0, MATERIAL_METAL = 1, MATERIAL_DIELECTRIC = 2 } material_type_t;
+typedef enum {
+  MATERIAL_UNKOWN = -1,
+  MATERIAL_LAMBERTIAN = 0,
+  MATERIAL_METAL = 1,
+  MATERIAL_DIELECTRIC = 2,
+  MATERIAL_DIFFUSE_LIGHT = 3
+} material_type_t;
 
 /**
  * @struct material_t
@@ -30,7 +36,14 @@ typedef struct {
  * @param scattered_ray Pointer to the scattered ray.
  * @return True if the ray is scattered, false otherwise.
  */
-bool material_scatter(material_t* material, ray_t* ray, hit_record_t* hit_record, color_t* attenuation, ray_t* scattered_ray);
+bool material_scatter(material_t* material, ray_t* ray, hit_record_t* hit_record, color_t* attenuation,
+                      ray_t* scattered_ray);
+
+/**
+ * @brief Returns the emitted color of a material.
+ * @return The emitted color (black for non-emitting materials).
+ */
+color_t material_emitted(material_t* material, double u, double v, vec3_t* p);
 
 /**
  * @struct lambertian_t
@@ -67,7 +80,8 @@ lambertian_t lambertian_create(texture_t* texture);
  * @param scattered_ray Pointer to the scattered ray.
  * @return True if the ray is scattered, false otherwise.
  */
-bool lambertian_scatter(lambertian_t* material, ray_t* ray, hit_record_t* hit_record, color_t* attenuation, ray_t* scattered_ray);
+bool lambertian_scatter(lambertian_t* material, ray_t* ray, hit_record_t* hit_record, color_t* attenuation,
+                        ray_t* scattered_ray);
 
 /**
  * @struct metal_t
@@ -127,4 +141,26 @@ dielectric_t dielectric_create(double refraction_index);
  * @param scattered_ray Pointer to the scattered ray.
  * @return True if the ray is scattered, false otherwise.
  */
-bool dielectric_scatter(dielectric_t* material, ray_t* ray, hit_record_t* hit_record, color_t* attenuation, ray_t* scattered_ray);
+bool dielectric_scatter(dielectric_t* material, ray_t* ray, hit_record_t* hit_record, color_t* attenuation,
+                        ray_t* scattered_ray);
+
+/**
+ * @struct diffuse_light_t
+ * @brief A structure to represent a diffues light material.
+ */
+typedef struct {
+  material_t base;
+  texture_t* texture;
+} diffuse_light_t;
+
+/**
+ * @brief Creates a diffuse light material.
+ * @param tex Pointer to the texture defining the light's color.
+ */
+diffuse_light_t diffuse_light_create(texture_t* texture);
+
+/**
+ * @brief Creates a diffuse light material from a color.
+ * @param color The color of the light.
+ */
+diffuse_light_t diffuse_light_create_from_color(color_t color);

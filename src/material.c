@@ -16,8 +16,25 @@ bool material_scatter(material_t* material, ray_t* ray, hit_record_t* hit_record
   case MATERIAL_DIELECTRIC:
     return dielectric_scatter((dielectric_t*)material, ray, hit_record, attenuation, scattered_ray);
 
+  case MATERIAL_DIFFUSE_LIGHT:
+    return false;
+
   default:
     return false;
+  }
+}
+
+color_t material_emitted(material_t* material, double u, double v, vec3_t* p) {
+  if (!material)
+    return col_create(0, 0, 0);
+
+  switch (material->type) {
+  case MATERIAL_DIFFUSE_LIGHT: {
+    diffuse_light_t* light = (diffuse_light_t*)material;
+    return texture_value(light->texture, u, v, p);
+  }
+  default:
+    return col_create(0, 0, 0);
   }
 }
 
@@ -91,4 +108,14 @@ bool dielectric_scatter(dielectric_t* material, ray_t* ray, hit_record_t* hit_re
 
   *scattered_ray = (ray_t){hit_record->point, direction, ray->time};
   return true;
+}
+
+diffuse_light_t diffuse_light_create(texture_t* texture) {
+  return (diffuse_light_t){{MATERIAL_DIFFUSE_LIGHT}, texture};
+}
+
+diffuse_light_t diffuse_light_create_from_color(color_t color) {
+  solid_texture_t* texture = malloc(sizeof(solid_texture_t));
+  *texture = solid_texture_create(color);
+  return diffuse_light_create((texture_t*)texture);
 }

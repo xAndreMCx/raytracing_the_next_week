@@ -1,13 +1,17 @@
 #include "camera.h"
 
 #include <assert.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
+#include "hittable.h"
+#include "interval.h"
 #include "material.h"
 #include "ppm.h"
 #include "utils.h"
+#include "vec.h"
 
 camera_t camera_create(unsigned int image_width, double aspect_ratio, vec3_t look_from, vec3_t look_at, vec3_t up,
                        double field_of_view) {
@@ -74,7 +78,7 @@ void* render_pixel_worker(void* arg) {
     color_t pixel_color = col_create(0, 0, 0);
     for (unsigned int sample = 0; sample < data->camera->samples_per_pixel; sample++) {
       ray_t ray = ray_get(data->camera, x, y);
-      pixel_color = vec3_add(pixel_color, ray_color(&ray, data->camera->max_depth, data->world));
+      pixel_color = vec3_add(pixel_color, ray_color(data->camera, &ray, data->camera->max_depth, data->world));
     }
 
     pixel_color = vec3_scale(pixel_color, 1.0f / data->camera->samples_per_pixel);
@@ -130,7 +134,7 @@ void render(camera_t* camera, hittable_list_t* world, const char* filepath) {
   free(pool_data);
 }
 
-color_t ray_color(ray_t* ray, unsigned int depth, hittable_list_t* world) {
+color_t ray_color(camera_t* camera, ray_t* ray, unsigned int depth, hittable_list_t* world) {
   assert(ray);
   assert(world);
 
@@ -139,19 +143,23 @@ color_t ray_color(ray_t* ray, unsigned int depth, hittable_list_t* world) {
   }
 
   hit_record_t hit_record;
-  if (hittable_list_hit(world, ray, &(interval_t){.min = 0.0001, .max = INFINITY}, &hit_record)) {
-    ray_t scattered;
-    color_t attenuation;
-    if (material_scatter((material_t*)hit_record.material, ray, &hit_record, &attenuation, &scattered)) {
-      return vec3_hadamard(attenuation, ray_color(&scattered, depth - 1, world));
-    }
-    return col_create(0, 0, 0);
+  interval_t interval = interval_create(0.0001, INFINITY);
+
+  if (!hittable_list_hit(world, ray, &interval, &hit_record)) {
+    return camera->background;
   }
 
-  // Background
-  vec3_t unit_vec = vec3_normalised(ray->direction);
-  double a = (unit_vec.y + 1.00) * 0.5;
-  return vec3_add(vec3_scale(col_create(1.0, 1.0, 1.0), 1.00 - a), vec3_scale(col_create(0.5, 0.7, 1.0), a));
+  ray_t scattered;
+  color_t attenuation;
+  color_t color_from_emission =
+      material_emitted((material_t*)hit_record.material, hit_record.u, hit_record.v, &hit_record.point);
+
+  if (!material_scatter((material_t*)hit_record.material, ray, &hit_record, &attenuation, &scattered)) {
+    return color_from_emission;
+  }
+
+  color_t color_from_scatter = vec3_hadamard(attenuation, ray_color(camera, &scattered, depth - 1, world));
+  return vec3_add(color_from_emission, color_from_scatter);
 }
 
 ray_t ray_get(camera_t* camera, unsigned int x, unsigned int y) {

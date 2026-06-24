@@ -110,8 +110,7 @@ vec3_t vec3_random_in_unit_disk(void) {
 
 color_t col_create(double r, double g, double b) {
   if (r < 0.0 || r > 1.0 || g < 0.0 || g > 1.0 || b < 0.0 || b > 1.0) {
-    fprintf(stderr, "col_create error: RGB values must be in the range [0.0, 1.0].\n");
-    return vec3_create(0, 0, 0);
+    fprintf(stderr, "col_create warning: RGB values exceeds the range [0.0, 1.0].\n");
   }
   vec3_t color = {.r = r, .g = g, .b = b};
   return color;

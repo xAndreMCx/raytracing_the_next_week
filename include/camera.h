@@ -4,6 +4,7 @@
 #include "hittable_list.h"
 #include "ppm.h"
 #include "ray.h"
+#include "vec.h"
 
 /**
  * @struct camera_t
@@ -27,6 +28,7 @@ typedef struct {
   vec3_t defocus_disk_v;
   double defocus_angle;
   double focus_distance;
+  color_t background;
 } camera_t;
 
 /**
@@ -75,12 +77,13 @@ void render(camera_t* camera, hittable_list_t* world, const char* filepath);
 /**
  * @brief Computes the color of a ray.
  *
+ * @param camera Pointer to the camera.
  * @param ray Pointer to the ray.
  * @param depth Current depth of the ray.
  * @param world Pointer to the hittable list representing the world.
  * @return The color of the ray.
  */
-color_t ray_color(ray_t* ray, unsigned int depth, hittable_list_t* world);
+color_t ray_color(camera_t* camera, ray_t* ray, unsigned int depth, hittable_list_t* world);
 
 /**
  * @brief Generates a ray from the camera through a specific pixel.
